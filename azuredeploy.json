@@ -89,7 +89,25 @@
       "metadata": {
         "description": "Size of the VM"
       }
-    }
+    },
+      "_artifactsLocation": {
+          "type": "string"
+      },
+      "_artifactsLocationSasToken": {
+          "type": "securestring"
+      },
+      "testScriptFolder": {
+          "type": "string",
+          "metadata": {
+              "description": "Script file location. This path is relative to the _artifactsLocation parameter"
+          }
+      },
+      "testScriptFileName": {
+          "type": "string",
+          "metadata": {
+              "description": "Name of the script file"
+          }
+      }
   },
   "variables": {
     "storageAccountType": "Standard_LRS",
@@ -98,6 +116,7 @@
     "subnetName": "Subnet-1",
     "subnetPrefix": "10.0.0.0/24",
     "publicIPAddressType": "Dynamic",
+        "customScriptFilePath": "https://raw.githubusercontent.com/shirhatti/azure-template-lb-ubuntuserver/master/deploy.sh",
     "vnetID": "[resourceId('Microsoft.Network/virtualNetworks',parameters('vnetName'))]",
     "subnetRef": "[concat(variables('vnetID'),'/subnets/',variables ('subnetName'))]",
     "publicIPAddressID": "[resourceId('Microsoft.Network/publicIPAddresses',parameters('publicIPAddressName'))]",
@@ -220,7 +239,7 @@
         ],
         "inboundNatRules": [
           {
-            "name": "RDP-VM0",
+            "name": "SSH-VM0",
             "properties": {
               "frontendIPConfiguration": {
                 "id": "[variables('frontEndIPConfigID')]"
@@ -232,7 +251,7 @@
             }
           },
           {
-            "name": "RDP-VM1",
+            "name": "SSH-VM1",
             "properties": {
               "frontendIPConfiguration": {
                 "id": "[variables('frontEndIPConfigID')]"
@@ -352,6 +371,27 @@
              "storageUri": "[concat('http://',parameters('storageAccountName'),'.blob.core.windows.net')]"
           }
         }
+      },
+      {
+          "name": "[concat(parameters('vmNamePrefix'), copyindex(), '/extension')]",
+          "type": "extensions",
+          "location": "[resourceGroup().location]",
+          "apiVersion": "2015-06-15",
+          "dependsOn": [
+              "[concat('Microsoft.Compute/virtualMachines/', concat(parameters('vmNamePrefix'), copyindex()))]"
+          ],
+          "properties": {
+              "publisher": "Microsoft.OSTCExtensions",
+              "type": "CustomScriptForLinux",
+              "typeHandlerVersion": "1.3",
+              "autoUpgradeMinorVersion": true,
+              "settings": {
+                  "fileUris": [
+                     "[variables('customScriptFilePath')]"
+                  ],
+                  "commandToExecute": "bash deploy.sh"
+              }
+          }
       }
     }
   ]
