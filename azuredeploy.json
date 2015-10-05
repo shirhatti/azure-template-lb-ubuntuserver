@@ -1,3 +1,4 @@
+
 {
   "$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json",
   "contentVersion": "1.0.0.0",
@@ -245,7 +246,7 @@
         ],
         "loadBalancingRules": [
           {
-            "name": "LBRule",
+            "name": "HTTP",
             "properties": {
               "frontendIPConfiguration": {
                 "id": "[variables('frontEndIPConfigID')]"
@@ -256,6 +257,25 @@
               "protocol": "tcp",
               "frontendPort": 80,
               "backendPort": 80,
+              "enableFloatingIP": false,
+              "idleTimeoutInMinutes": 5,
+              "probe": {
+                "id": "[variables('lbProbeID')]"
+              }
+            }
+          },
+                    {
+            "name": "HTTPS",
+            "properties": {
+              "frontendIPConfiguration": {
+                "id": "[variables('frontEndIPConfigID')]"
+              },
+              "backendAddressPool": {
+                "id": "[variables('lbPoolID')]"
+              },
+              "protocol": "tcp",
+              "frontendPort": 443,
+              "backendPort": 443,
               "enableFloatingIP": false,
               "idleTimeoutInMinutes": 5,
               "probe": {
