@@ -8,8 +8,8 @@
     "adminUsername": {
       "value": "azureuser"
     },
-    "adminPassword": {
-      "value": "Admin123_!"
+    "sshKeyData": {
+      "value": "ssh rsa public key"
     },
     "dnsNameforLBIP": {
       "value": "mydnsname"
