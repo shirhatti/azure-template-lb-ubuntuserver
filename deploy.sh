@@ -21,3 +21,9 @@ sudo ldconfig
 # Install/configure Nginx
 sudo apt-get install -qq nginx
 curl https://raw.githubusercontent.com/shirhatti/azure-template-lb-ubuntuserver/master/resources/nginx/default | sudo dd of=/etc/nginx/sites-available/default
+sudo cp server.crt /etc/nginx/ssl/server.crt
+sudo cp server.key /etc/nginx/ssl/server.key
+sudo mkdir /etc/nginx/ssl
+sudo chown -R root:root /etc/nginx/ssl
+sudo chmod -R 600 /etc/nginx/ssl
+sudo service nginx reload

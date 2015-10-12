@@ -88,7 +88,19 @@
       "metadata": {
         "description": "Size of the VM"
       }
-    }
+    },
+    "customScriptConfigStorageAccountName": {
+      "type": "string",
+      "metadata": {
+        "description": "Private storage account name in which you are storing your certificates for ansible and the template bash scripts"
+      }
+    },
+    "customScriptConfigStorageAccountKey": {
+      "type": "string",
+      "metadata": {
+        "description": "Private storage account key"
+      }
+    },
   },
   "variables": {
     "storageAccountType": "Standard_LRS",
@@ -221,7 +233,7 @@
         ],
         "inboundNatRules": [
           {
-            "name": "RDP-VM0",
+            "name": "SSH-VM0",
             "properties": {
               "frontendIPConfiguration": {
                 "id": "[variables('frontEndIPConfigID')]"
@@ -233,7 +245,7 @@
             }
           },
           {
-            "name": "RDP-VM1",
+            "name": "SSH-VM1",
             "properties": {
               "frontendIPConfiguration": {
                 "id": "[variables('frontEndIPConfigID')]"
@@ -401,9 +413,15 @@
           "autoUpgradeMinorVersion": true,
           "settings": {
               "fileUris": [
-                  "[variables('customScriptFilePath')]"
+                  "[variables('customScriptFilePath')]",
+                  "https://goasp.blob.core.windows.net/ssl/server.crt",
+                  "https://goasp.blob.core.windows.net/ssl/server.key"
               ],
               "commandToExecute": "bash deploy.sh"
+          },
+          "protectedSettings": {
+            "storageAccountName": "[parameters('customScriptConfigStorageAccountName')]",
+            "storageAccountKey": "[parameters('customScriptConfigStorageAccountKey')]"
           }
       }
     }
